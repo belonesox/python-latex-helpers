@@ -7,7 +7,7 @@ import os
 import random
 import time
 
-import belonesox_tools.MiscUtils as ut
+# import belonesox_tools.MiscUtils as ut
 import optparse 
 
 # pylint: disable=C0111
@@ -68,7 +68,8 @@ class Helper:
         self.basename = os.path.splitext(mynameext)[0]
         self.objdir = os.path.join(mypath, "--obj", mynameext + ".obj")
         if not os.path.exists(self.objdir):
-            ut.createdir(self.objdir)
+            # ut.createdir(self.objdir)
+            os.makedirs(self.objdir, exist_ok=True)
         self.prefix = os.path.join(self.objdir, "")
         self.dotprefix = os.path.join(self.objdir, "dot")
         self.svgprefix = os.path.join(self.objdir, "svg")
@@ -92,7 +93,9 @@ class Helper:
         tex = "\n".join(self.lines)
         texdoc = self.tex_template % {'tex': tex}
         filename = self.texprefix + ".tex"
-        ut.string2file(texdoc, filename)
+        # ut.string2file(texdoc, filename)
+        with open(filename, 'w', encoding='utf-8') as lf:
+            lf.write(texdoc)
 
     def no_more_time(self):
         return time.time() > self.deadline
@@ -100,12 +103,12 @@ class Helper:
    
     def reset_tex(self):
         filename = self.texprefix + ".tex"
-        lf = open(filename, "w")
+        lf = open(filename, "w", encoding='utf-8')
         lf.close()
     
     def print_tex(self, tex_str):
         filename = self.texprefix + ".tex"
-        lf = open(filename, "a+")
+        lf = open(filename, "a+", encoding='utf-8')
         lf.write(tex_str + "\n")
         lf.close()
     
@@ -135,9 +138,12 @@ class Helper:
               }
               """ % vars()
                 graphname = self.dotprefix + prefix + '-%02d.%s' % (frame, ext)
-                ut.string2file(graph_str, graphname)
+                # ut.string2file(graph_str, graphname)
+                with open(graphname, 'w', encoding='utf-8') as lf:
+                    lf.write(graph_str)
+
                 
-                tex_str = ur"""
+                tex_str = r"""
               \begin{frame}
               \frametitle{%(frametitle)s}
               \begin{center}
@@ -145,7 +151,9 @@ class Helper:
               \end{center}
               \end{frame}
               """  % vars()
-                self.print_tex(tex_str.encode("utf-8"))
+                self.print_tex(tex_str)
       
         graphname = self.dotprefix+'-last.%s' % ext
-        ut.string2file(graph_str, graphname)
+        with open(graphname, 'w', encoding='utf-8') as lf:
+            lf.write(graph_str)
+        # ut.string2file(graph_str, graphname)
